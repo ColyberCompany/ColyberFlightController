@@ -48,6 +48,8 @@ namespace Config
 
     extern const vector3Int16 AccOffset;
     extern const vector3Int16 GyroOffset;
+
+    constexpr uint8_t MaxLogSize = 30;
 }
 
 
