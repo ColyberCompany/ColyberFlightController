@@ -14,8 +14,9 @@
 #include "Failsafe/FailsafeActions/DisarmMotors.h"
 #include "Failsafe/FailsafeScenarios/CommunicationLost.h"
 #include "Failsafe/FailsafeScenarios/TiltExceeding.h"
-#include "FlightModes/StabilizeFlightMode.h"
 #include "FlightModes/UnarmedFlightMode.h"
+#include "FlightModes/StabilizeFlightMode.h"
+#include "FlightModes/AltHoldFlightMode.h"
 #include "PositionAndRotation/AHRS.h"
 #include "PositionAndRotation/RotationCalculation/MadgwickIMU.h"
 #include "PositionAndRotation/RotationCalculation/MadgwickAHRS.h"
@@ -23,11 +24,12 @@
 #include "Sensors/SensorsMediator.h"
 #include "Sensors/MPU6050Adapter.h"
 #include "Sensors/HMC5883LAdapter.h"
+#include "Sensors/MS5611Adapter.h"
+#include "Sensors/NoSensor.h"
 #include "Motors/QuadXMotors.h"
 #include <StreamComm.h>
 #include <PacketCommunicationWithQueue.h>
 #include "VirtualPilot.h"
-#include "Sensors/NoSensor.h"
 #include "Debug/SerialDebugMessenger.h"
 #include "Common/Constants.h"
 #include "Tasks.h"
@@ -76,10 +78,10 @@ namespace Assemble
         PacketCommunicationWithQueue rmtPacketComm(&rmtCtrlCommStream, Config::RmtCtrlMaxQueuedBuffers); // Remote comm instance
     }
 
-
     namespace FlightModes {
         UnarmedFlightMode unarmedFlightMode;
         StabilizeFlightMode stabilizeFlightMode;
+        AltHoldFlightMode altHoldFlightMode(stabilizeFlightMode);
     }
 
     VirtualPilot virtualPilotInstance(FlightModes::unarmedFlightMode);
@@ -87,6 +89,7 @@ namespace Assemble
     namespace Sensors {
         MPU6050Adapter mpu6050(sensorsMediator);
         HMC5883LAdapter hmc5883l(sensorsMediator, mpu6050.getMPU6050Ptr());
+        MS5611Adapter ms5611(sensorsMediator, simpleTasker);
         NoSensor noSensor(sensorsMediator);
     }
 
@@ -116,7 +119,7 @@ namespace Instance
     Sensor& accel = *Assemble::Sensors::mpu6050.getAccSensor();
     Sensor& gyro = *Assemble::Sensors::mpu6050.getGyroSensor();
     Sensor& magn = Assemble::Sensors::hmc5883l;
-    Sensor& baro = noSensor;
+    Sensor& baro = Assemble::Sensors::ms5611;
     Sensor& gps = noSensor;
     Sensor& btmRangefinder = noSensor;
 
@@ -129,10 +132,7 @@ namespace Instance
 class : public Task
 {
     void execute() override {
-        /*
-        Serial1.print(Instance::ahrs.getPitch_deg());
-        Serial1.print('\t');
-        Serial1.println(Instance::ahrs.getRoll_deg());*/
+        //Serial1.println(Instance::sensorsData.getPressure_mbar());
     }
 } debugTask;
 
@@ -217,6 +217,7 @@ void setupFlightModes()
 {
     Instance::virtualPilot.addFlightMode(&Assemble::FlightModes::unarmedFlightMode);
     Instance::virtualPilot.addFlightMode(&Assemble::FlightModes::stabilizeFlightMode); // TODO: think whether to pass flight modes by reference
+    Instance::virtualPilot.addFlightMode(&Assemble::FlightModes::altHoldFlightMode);
     // add other flight modes...
 
     Instance::virtualPilot.initializeFlightModes();

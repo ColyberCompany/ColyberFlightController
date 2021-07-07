@@ -20,7 +20,6 @@
 
 class HMC5883LAdapter: public Sensor, public Task
 {
-private:
     SimpleHMC5883L compass;
     SimpleMPU6050* mpu; // used to enable compass bypass on GY86.
 

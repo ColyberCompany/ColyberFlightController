@@ -19,8 +19,8 @@ class StabilizeFlightMode : public FlightMode
     PID levelingYPID;
     PID headingHoldPID;
 
-    float headingToHold = 0;
-    float headingError = 0;
+    float headingToHold = 0; // [deg] (0 : 359.99...)
+    float headingError = 0; // [deg] (-180 : 180)
 
 
 public:

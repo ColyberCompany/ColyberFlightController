@@ -71,7 +71,7 @@ public:
     {
         axesAmt = other.axesAmt;
         valuesArray = new float[axesAmt];
-        for (uint8_t i=0; i < axesAmt; i++)
+        for (uint8_t i = 0; i < axesAmt; i++)
             valuesArray[i] = other.valuesArray[i];
     }
 
@@ -149,6 +149,13 @@ public:
             valuesArray[(uint8_t)axis] = value;
     }
 
+    /**
+     * @brief Axes amount getter.
+     */
+    uint8_t getAxesAmt()
+    {
+        return axesAmt;
+    }
 
 private:
     void allocateMemory(uint8_t axesAmt)

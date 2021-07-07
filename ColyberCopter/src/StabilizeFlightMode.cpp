@@ -76,13 +76,12 @@ const char* StabilizeFlightMode::getName()
 
 void StabilizeFlightMode::flightModeLoop(ControlSticks& inputOutputSticks)
 {
-    if (inputOutputSticks.getThrottle() < 100)
+    if (inputOutputSticks.getThrottle() < 100) // TODO: think if this could be checked in a better way then just throttle threshold
         return;
 
     updateLeveling(inputOutputSticks);
     updateHeadingHolding(inputOutputSticks);
 }
-
 
 
 void StabilizeFlightMode::updateLeveling(ControlSticks& inputOutputSticks)
@@ -100,6 +99,7 @@ void StabilizeFlightMode::updateHeadingHolding(ControlSticks& inputOutputSticks)
 {
     updateHeadingToHold(inputOutputSticks.getYaw());
     calculateHeadingError();
+    
     inputOutputSticks.setYaw(headingHoldPID.update(headingError));
 }
 

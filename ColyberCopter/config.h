@@ -36,6 +36,8 @@ namespace Config
     extern const float AccLPFCutOffFreq;
     extern const float GyroLPFCutOffFreq;
 
+    extern const uint16_t ThrottleStickCenter;
+
     extern const float LevelingPID_kP;
     extern const float LevelingPID_kI;
     extern const float LevelingPID_kD;
@@ -45,6 +47,11 @@ namespace Config
     extern const float HeadHoldPID_kI;
     extern const float HeadHoldPID_kD;
     extern const uint16_t HeadHoldPID_IMax;
+
+    extern const float AltHoldPID_kP;
+    extern const float AltHoldPID_kI;
+    extern const float AltHoldPID_kD;
+    extern const uint16_t AltHoldPID_IMax;
 
     extern const vector3Int16 AccOffset;
     extern const vector3Int16 GyroOffset;

@@ -94,7 +94,7 @@ public:
         return magReading;
     }
 
-    float getPressure_hPa() override
+    float getPressure_mbar() override
     {
         return pressureReading;
     }
