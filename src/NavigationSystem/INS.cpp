@@ -86,7 +86,30 @@ void INS::udpateAltitude()
     float curPressure = Instance::baro.getPressure_hPa();
     float curTemperature = Instance::temperature.getTemperature_degC();
 
-    altitude_m = Common::Utils::calculateAltitude(refPressure, curPressure, curTemperature);
+    // altitude_m = Common::Utils::calculateAltitude(refPressure, curPressure, curTemperature);
+
+
+    // Kalman Filter accelerometer based altitude
+    float altitudeBaro_m = Common::Utils::calculateAltitude(refPressure, curPressure, curTemperature);
+
+    float acceleration = getEarthAcceleration_mps2().z;
+    float accelerationWithDecreasedPrecision = ((int16_t)(acceleration * 10)) / 10; // TODO: change to setting 0 if in some range, eg. <0.1, -0.1>
+    altitude_m = kalman.update(altitudeBaro_m, accelerationWithDecreasedPrecision);
+
+    // Serial1.print(5 * altitudeBaro_m);
+    // Serial1.print('\t');
+    // Serial1.println(5 * altitude_m);
+
+    // if (cnt >= 1)
+    // {
+    //     if (cnt == 1)
+    //     {
+    //         resetAltitude();
+    //         kalman.reset();
+    //     }
+    //     cnt--;
+    // }
+
 
 
 // // temp altitude calculation: (instead of Kalman)
